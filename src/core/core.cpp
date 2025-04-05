@@ -15,9 +15,12 @@ static void GPIOInit(void)
     Serial.println("GPIO Init...");
 }
 
+extern void SensorsInit(void);
+
 void core_init(void)
 {
     SerialInit();
     GPIOInit();
+    SensorsInit();
     Serial.println("Core init finish...");
 }

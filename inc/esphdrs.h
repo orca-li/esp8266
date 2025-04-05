@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -12,8 +14,10 @@
 #include "core.h"
 #include "getopt.h"
 
-#define LED_PIN 2 // GPIO2 D4
-#define RELAY_PIN 4 // D2 (GPIO4)
+#define LED_PIN 2 // (GPIO2) D4
+#define RELAY_PIN 4 // (GPIO4) D2
+#define ONE_WIRE_BUS 0 // (GPIO0) D3
+#define TERMO_SENSORS_COUNT 4
 
 #define if_time_has_come(_delay, _continue)    \
     do                                         \

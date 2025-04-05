@@ -9,5 +9,6 @@ void loop(void)
 {
     debug_led();
     relay_handler();
+    termo_handler();
     shell();
 }

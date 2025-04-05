@@ -30,6 +30,7 @@ static shelllist commands[] = {
     {"echo", shellmain_echo},
     {"wifi", shellmain_wifi},
     {"shell", shellmain_shell},
+    {"termo", shellmain_termo},
     {NULL, NULL}};
 
 static charshell_t shell_buffer[SHELL_BUFFER_SIZE];
