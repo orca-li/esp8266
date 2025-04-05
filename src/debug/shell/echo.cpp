@@ -1,6 +1,8 @@
 #include "shell.h"
 
-int shellmain_echo(int argc, char **argv)
+#define SHELL
+
+SHELL int shellmain_echo(int argc, char **argv)
 {
     for (int i = 1; i < argc; ++i)
     {

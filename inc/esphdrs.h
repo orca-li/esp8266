@@ -7,10 +7,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 
 #include "debug.h"
 #include "core.h"
+#include "getopt.h"
 
 #define DEBUG_LED_PIN 2 // GPIO2 D4
 

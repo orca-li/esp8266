@@ -2,7 +2,6 @@
 
 #define DEBUG_MODE 0
 
-#define SHELL_ERROR -1
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
 

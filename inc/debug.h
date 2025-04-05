@@ -1,4 +1,4 @@
 #pragma once
 
-void debug_led(uintmax_t interval);
+void debug_led(void);
 void shell(void);

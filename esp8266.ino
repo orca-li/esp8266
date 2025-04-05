@@ -7,6 +7,6 @@ void setup(void)
 
 void loop(void)
 {
-    debug_led(1000);
+    debug_led();
     shell();
 }
