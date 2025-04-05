@@ -14,11 +14,12 @@ typedef enum
     TERMO_MODE_AUTO,
     TERMO_MODE_DEFAULT = TERMO_MODE_AUTO,
 } TERMO_MODES;
+typedef float float_temperature_t;
 
 #define TERMO_MODE_INIT TERMO_MODE_DEFAULT
 #define TERMO_DELAY_DEFAULT 1000
 #define TERMO_TEMPERATURE_DEFAULT 0.00
-#define TERMO_SHOW_LOGS_DEFAULT false
+#define TERMO_HEATER_ZONE_DEFAULT 10.00
 
 struct TERMOCTL
 {
@@ -27,14 +28,14 @@ struct TERMOCTL
     termo_handler_t handler;
     float temperature;
     float tempmanual;
-    bool show_logs : 1;
+    float_temperature_t heater_zone;
 } termoctl = {
     .mode = TERMO_MODE_INIT,
     .delay = TERMO_DELAY_DEFAULT,
     .handler = _termo_init,
     .temperature = TERMO_TEMPERATURE_DEFAULT,
     .tempmanual = TERMO_TEMPERATURE_DEFAULT,
-    .show_logs = TERMO_SHOW_LOGS_DEFAULT,
+    .heater_zone = TERMO_HEATER_ZONE_DEFAULT,
 };
 
 OneWire oneWire(ONE_WIRE_BUS);
@@ -82,12 +83,28 @@ PUBLIC void SensorsInit(void)
         sensors.getAddress(temperatureSensors[i], i);
 }
 
+static void RelayControl(void)
+{
+    int currtemp = termoctl.temperature * 100;
+    int heater_zone = termoctl.heater_zone * 100;
+
+    if (currtemp <= heater_zone)
+    {
+        PublicRelaySet();
+    }
+    else
+    {
+        PublicRelayReset();
+    }
+}
+
 static void termo_mode_handler(void)
 {
     if (termoctl.mode == TERMO_MODE_AUTO)
     {
         GetCurrTemp();
     }
+    RelayControl();
 }
 
 static void _termo(void)
@@ -113,6 +130,7 @@ void termo_help_print(void)
     printf("  -m, --mode=MODE                   Set the TERMO mode (manual, auto, default)\n");
     printf("  -d, --delay=MODE                  Set the value (ms)\n");
     printf("  -t, --set-temperature=MODE        Set the temperature (*C)\n");
+    printf("  -H, --set-heater-zone=MODE        Set the temperature (*C) for heater zone\n");
 }
 
 int termo_command(int argc, char **argv)
@@ -126,6 +144,7 @@ int termo_command(int argc, char **argv)
         {"mode", REQUIRED_ARGUMENT, 0, 'm'},
         {"delay", REQUIRED_ARGUMENT, 0, 'd'},
         {"set-temperature", REQUIRED_ARGUMENT, 0, 't'},
+        {"set-heater-zone", REQUIRED_ARGUMENT, 0, 'H'},
         {0, 0, 0, 0}};
 
     int option_index = 0;
@@ -134,12 +153,27 @@ int termo_command(int argc, char **argv)
     int new_delay = TERMO_DELAY_DEFAULT;
     float new_temperature = TERMO_TEMPERATURE_DEFAULT;
     char *endptr = NULL;
-    while ((opt = getopt_long(argc, argv, "hd:m:t:", long_options, &option_index)) != -1)
+    while ((opt = getopt_long(argc, argv, "hd:m:t:H:", long_options, &option_index)) != -1)
     {
         switch (opt)
         {
         case 'h':
             termo_help_print();
+            return EXIT_SUCCESS;
+
+        case 'H':
+            new_temperature = strtof(optarg, &endptr);
+
+            if (*endptr != '\0' || optarg == endptr)
+            {
+                printf("Error: '%s' is not number\n", optarg);
+                printf("Set default heater zone temperature %f\n", TERMO_TEMPERATURE_DEFAULT);
+                termoctl.heater_zone = TERMO_HEATER_ZONE_DEFAULT;
+                return EXIT_FAILURE;
+            }
+
+            termoctl.heater_zone = new_temperature;
+            printf("Setting heater zone temperature to %.2f\n", termoctl.heater_zone);
             return EXIT_SUCCESS;
 
         case 't':
@@ -149,14 +183,14 @@ int termo_command(int argc, char **argv)
             if (*endptr != '\0' || optarg == endptr)
             {
                 printf("Error: '%s' is not number\n", optarg);
-                printf("Set default temperature %d\n", TERMO_TEMPERATURE_DEFAULT);
+                printf("Set default temperature %f\n", TERMO_TEMPERATURE_DEFAULT);
                 termoctl.tempmanual = TERMO_TEMPERATURE_DEFAULT;
                 return EXIT_FAILURE;
             }
 
             termoctl.tempmanual = new_temperature;
             termoctl.temperature = termoctl.tempmanual;
-            printf("Setting temperature to %d\n", termoctl.tempmanual);
+            printf("Setting temperature to %.2f\n", termoctl.tempmanual);
             return EXIT_SUCCESS;
 
         case 'd':
@@ -210,7 +244,7 @@ int termo_command(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    printf("Termo:\n\t[mode]\t%s\n", (termoctl.mode = TERMO_MODE_MANUAL) ? "MANUAL" : "AUTO");
+    printf("Termo:\n\t[mode]\t%s\n", (termoctl.mode == TERMO_MODE_MANUAL) ? "MANUAL" : "AUTO");
     printf("\t[delay]\t%d\n", termoctl.delay);
     printf("\t[devices]:\n");
     for (int i = 0; i < deviceCount; ++i)
@@ -220,6 +254,7 @@ int termo_command(int argc, char **argv)
         printf("(temperature: %.2f)\n", sensors.getTempC(temperatureSensors[i]));
     }
     printf("\t[temperature *C]: %.2f\n", termoctl.temperature);
+    printf("\t[heater zone *C]: %.2f\n", termoctl.heater_zone);
 
     return EXIT_SUCCESS;
 }

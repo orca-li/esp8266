@@ -8,7 +8,8 @@ typedef enum
 {
     RELAY_MODE_BLINK,
     RELAY_MODE_MANUAL,
-    RELAY_MODE_DEFAULT = RELAY_MODE_MANUAL,
+    RELAY_MODE_TERMO,
+    RELAY_MODE_DEFAULT = RELAY_MODE_TERMO,
 } RELAY_MODES;
 #define RELAY_MODE_INIT RELAY_MODE_DEFAULT
 #define RELAY_DELAY_DEFAULT 1000
@@ -43,12 +44,10 @@ static void relay_mode_handler(void)
     if (relayctl.mode == RELAY_MODE_BLINK)
     {
         togglePin(relayctl.pin);
+        return;
     }
 
-    if (relayctl.mode == RELAY_MODE_MANUAL)
-    {
-        digitalWrite(relayctl.pin, relayctl.power);
-    }
+    digitalWrite(relayctl.pin, relayctl.power);
 }
 
 static void _relay(void)
@@ -72,7 +71,7 @@ void relay_help_print(void)
     printf("Usage: relay [options]\n");
     printf("Options:\n");
     printf("  -h, --help              Show this help message and exit\n");
-    printf("  -m, --mode=MODE         Set the RELAY mode (blink, set, reset, default)\n");
+    printf("  -m, --mode=MODE         Set the RELAY mode (termo, blink, set, reset, default)\n");
     printf("  -d, --delay=MODE        Set the value (ms)\n");
 }
 
@@ -133,6 +132,12 @@ int relay_command(int argc, char **argv)
                 relayctl.mode = RELAY_MODE_MANUAL;
                 relayctl.power = RELAY_POWER_OFF;
             }
+            else if (strcmp(optarg, "termo") == 0)
+            {
+                printf("Setting RELAY mode to termo\n");
+                relayctl.mode = RELAY_MODE_TERMO;
+                relayctl.delay = 0;
+            }
             else if (strcmp(optarg, "default") == 0)
             {
                 printf("Setting RELAY mode to default\n");
@@ -154,19 +159,40 @@ int relay_command(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    if (relayctl.mode == RELAY_MODE_DEFAULT && relayctl.delay == RELAY_DELAY_DEFAULT)
+    if (relayctl.mode == RELAY_MODE_TERMO)
     {
-        printf("Relay:\n\t[mode]\t%s\n", "DEFAULT");
-        printf("\t[delay]\t%d\n", relayctl.delay);
-        printf("\t[power]\t%s\n", (relayctl.power == RELAY_POWER_ON) ? "on" : "off");
-
-        return EXIT_SUCCESS;
+        printf("Relay:\n\t[mode]\t%s\n", "TERMO");
     }
-    printf("Relay:\n\t[mode]\t%s\n", (relayctl.mode == RELAY_MODE_BLINK) ? "BLINK" : "MANUAL");
+    else if (relayctl.mode == RELAY_MODE_MANUAL)
+    {
+        printf("Relay:\n\t[mode]\t%s\n", "MANUAL");
+    }
+    else if (relayctl.mode == RELAY_MODE_BLINK)
+    {
+        printf("Relay:\n\t[mode]\t%s\n", "BLINK");
+    }
+    else
+    {
+        printf("Relay:\n\t[mode]\t%s\n", "ERROR");
+    }
     printf("\t[delay]\t%d\n", relayctl.delay);
     printf("\t[power]\t%s\n", (relayctl.power == RELAY_POWER_ON) ? "on" : "off");
 
     return EXIT_SUCCESS;
+}
+
+PUBLIC void PublicRelaySet(void)
+{
+    if ((relayctl.mode == RELAY_MODE_MANUAL) || (relayctl.mode == RELAY_MODE_BLINK))
+        return;
+    relayctl.power = RELAY_POWER_ON;
+}
+
+PUBLIC void PublicRelayReset(void)
+{
+    if ((relayctl.mode == RELAY_MODE_MANUAL) || (relayctl.mode == RELAY_MODE_BLINK))
+        return;
+    relayctl.power = RELAY_POWER_OFF;
 }
 
 SHELL int shellmain_relay(int argc, char **argv)
