@@ -1,7 +1,14 @@
 #pragma once
 
 #include <Arduino.h>
+
 #include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+
 #include "debug.h"
 #include "core.h"
 

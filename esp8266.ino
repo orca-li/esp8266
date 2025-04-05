@@ -2,10 +2,11 @@
 
 void setup(void)
 {
-	core_init();
+    core_init();
 }
 
 void loop(void)
 {
-	debug_led(1000);
+    debug_led(1000);
+    shell();
 }
