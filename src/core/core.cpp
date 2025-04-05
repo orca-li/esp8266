@@ -10,7 +10,8 @@ static void SerialInit(void)
 
 static void GPIOInit(void)
 {
-    pinMode(DEBUG_LED_PIN, OUTPUT);
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(RELAY_PIN, OUTPUT);
     Serial.println("GPIO Init...");
 }
 

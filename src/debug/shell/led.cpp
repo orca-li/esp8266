@@ -3,8 +3,6 @@
 #define PUBLIC
 #define SHELL
 
-#define LED_PIN 2 // D4 (GPIO2)
-
 typedef void (*led_handler)(void);
 typedef enum
 {

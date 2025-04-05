@@ -12,7 +12,8 @@
 #include "core.h"
 #include "getopt.h"
 
-#define DEBUG_LED_PIN 2 // GPIO2 D4
+#define LED_PIN 2 // GPIO2 D4
+#define RELAY_PIN 4 // D2 (GPIO4)
 
 #define if_time_has_come(_delay, _continue)    \
     do                                         \

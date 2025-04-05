@@ -8,5 +8,6 @@ void setup(void)
 void loop(void)
 {
     debug_led();
+    relay_handler();
     shell();
 }
