@@ -15,16 +15,7 @@
 #define ARRAY_SIZE(_array) (sizeof(_array) / sizeof(*_array))
 #define SHELL_BUFFER_SIZE (128 + INDEX_NULLTERM) * sizeof(charshell_t)
 
-typedef char charshell_t;
-
-typedef int (*shellmain)(int, char **);
-typedef struct SHELL_LIST
-{
-    const char *name;
-    shellmain handler;
-} shelllist;
-
-static shelllist commands[] = {
+shelllist commands[] = {
     {"relay", shellmain_relay},
     {"led", shellmain_led},
     {"echo", shellmain_echo},
@@ -58,6 +49,17 @@ struct XSHELL
     .argv = NULL,
     .retval = 0,
 };
+
+void shell_command_list(void)
+{
+    for (int i = 0; commands[i].name != NULL; ++i)
+    {
+        printf("%s ", commands[i].name);
+        fflush(stdout);
+    }
+
+    printf("\n");
+}
 
 static shellmain find_command(const char *commandName)
 {
