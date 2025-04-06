@@ -17,6 +17,7 @@ static void GPIOInit(void)
 
 extern void SensorsInit(void);
 extern void FsInit(void);
+extern void WiFiInit(void);
 
 void core_init(void)
 {
@@ -24,5 +25,6 @@ void core_init(void)
     GPIOInit();
     SensorsInit();
     FsInit();
+    WiFiInit();
     Serial.println("Core init finish...");
 }

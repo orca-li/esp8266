@@ -15,3 +15,4 @@ void shell(void);
 void debug_led(void);
 void PublicRelaySet(void);
 void PublicRelayReset(void);
+void wifi_handler(void);
