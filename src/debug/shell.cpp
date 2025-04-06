@@ -22,6 +22,10 @@ shelllist commands[] = {
     {"wifi", shellmain_wifi},
     {"shell", shellmain_shell},
     {"termo", shellmain_termo},
+    {"ls", shellmain_ls},
+    {"pwd", shellmain_pwd},
+    {"cd", shellmain_cd},
+    {"cat", shellmain_cat},
     {NULL, NULL}};
 
 static charshell_t shell_buffer[SHELL_BUFFER_SIZE];

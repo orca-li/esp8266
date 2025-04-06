@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <LittleFS.h>
 
 #include <stdint.h>
 #include <stdbool.h>
