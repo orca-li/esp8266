@@ -181,7 +181,8 @@ static bool if_end_command(const char c)
         free_argv(xshell.argc, xshell.argv);
     }
 
-    parse_command_line(xshell.command, &xshell.argc, &xshell.argv);
+    if (xshell.command[0] != '\n' && xshell.command[0] != '\0')
+        parse_command_line(xshell.command, &xshell.argc, &xshell.argv);
 
     return true;
 }
@@ -235,6 +236,9 @@ static int xshellmaindebug(int argc, char **argv)
 static int xshellmain(int argc, char **argv)
 {
     shellmain main = NULL;
+
+    if (argv == NULL)
+        return EXIT_SUCCESS;
 
     xshellmaindebug(argc, argv);
 
