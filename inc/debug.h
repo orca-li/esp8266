@@ -16,3 +16,8 @@ void debug_led(void);
 void PublicRelaySet(void);
 void PublicRelayReset(void);
 void wifi_handler(void);
+void ServerSendJson(String jsondata);
+void server_handler(void);
+bool GetWifiStatus(void);
+
+#define SendTemperatureData(_str) ServerSendJson(_str)

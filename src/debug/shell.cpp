@@ -26,6 +26,7 @@ shelllist commands[] = {
     {"pwd", shellmain_pwd},
     {"cd", shellmain_cd},
     {"cat", shellmain_cat},
+    {"server", shellmain_server},
     {NULL, NULL}};
 
 static charshell_t shell_buffer[SHELL_BUFFER_SIZE];

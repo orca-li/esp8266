@@ -11,7 +11,7 @@ static void shell_help_print(void)
     printf("  -l, --list              Print all supported commands by the shell\n");
 }
 
-static int shell_command(int argc, char **argv)
+static int server_command(int argc, char **argv)
 {
     int opt;
 
@@ -63,7 +63,7 @@ int shellmain_shell(int argc, char **argv)
 
     if (strcmp(argv[0], "shell") == 0)
     {
-        return shell_command(argc, argv);
+        return server_command(argc, argv);
     }
     else
     {

@@ -6,6 +6,8 @@
 #include <LittleFS.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
 extern "C"
 {
 #include <user_interface.h>
@@ -25,6 +27,8 @@ extern "C"
 #define RELAY_PIN 4    // (GPIO4) D2
 #define ONE_WIRE_BUS 0 // (GPIO0) D3
 #define TERMO_SENSORS_COUNT 4
+#define WIFI_STATUS_CONNECTED true
+#define WIFI_STATUS_DISCONNECTED false
 
 #define if_time_has_come(_delay, _continue)    \
     do                                         \

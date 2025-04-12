@@ -11,5 +11,6 @@ void loop(void)
     relay_handler();
     termo_handler();
     wifi_handler();
+    server_handler();
     shell();
 }

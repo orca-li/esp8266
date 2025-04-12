@@ -16,8 +16,6 @@
 #define WIFI_PASSWORD_DEFAULT NULL
 #define WIFI_CONNECTION_DELAY_MAX_DEFAULT 2000
 #define WIFI_STATUS_DEFAULT WIFI_STATUS_DISCONNECTED
-#define WIFI_STATUS_CONNECTED true
-#define WIFI_STATUS_DISCONNECTED false
 #define WIFI_HIDDEN_PSWD_DEFAULT WIFI_HIDDENT_PSWD_ENABLE
 #define WIFI_HIDDENT_PSWD_ENABLE true
 #define WIFI_HIDDENT_PSWD_DISABLE false
@@ -64,6 +62,11 @@ static char *get_ipv4(void)
     snprintf(ip_address, sizeof(ip_address), "%d.%d.%d.%d", ipv4[0], ipv4[1], ipv4[2], ipv4[3]);
 
     return ip_address;
+}
+
+PUBLIC bool GetWifiStatus(void)
+{
+    return wifictl.status;
 }
 
 static void check_connect(void)
@@ -169,9 +172,9 @@ static void wifi_help_print(void)
     printf("Options:\n");
     printf("  -h, --help                         Show this help message and exit\n");
     printf("  -c, --connect [ssid] [password]    Connect to the network\n");
-    printf("  -H, --hidden-pswd=MODE             Hidden password set mode (yes, no)");
+    printf("  -H, --hidden-pswd=MODE             Hidden password set mode (yes, no)\n");
     printf("\nAlso see the configuration file in the following path:\n");
-    printf("\t/wifi/config.txt\n");
+    printf("\t/home/wifi.cfg\n");
     printf("Fill in this file with the necessary wifi routers using the following\n");
     printf("template:\n");
     printf("\t<ssid> <password>\n");
