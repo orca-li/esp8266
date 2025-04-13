@@ -113,11 +113,22 @@ static void WriteJsonToFile(String jsondata)
     file.close();
 }
 
+PUBLIC void SetNewManualTemp(float newtempC)
+{
+    termoctl.temperature = termoctl.tempmanual = newtempC;
+    termoctl.mode = TERMO_MODE_MANUAL;
+}
+
+PUBLIC void SetAutoSensorTemp(void)
+{
+    termoctl.mode = TERMO_MODE_AUTO;
+}
+
 extern void ServerSendJson(String jsondata);
 PUBLIC void SendCurrTempJson(void)
 {
     StaticJsonDocument<200> doc;
-    doc["temperature"] = getAverageTemperature();
+    doc["temperature"] = (termoctl.mode == TERMO_MODE_AUTO) ? getAverageTemperature() : termoctl.tempmanual;
 
     String jsonString;
     serializeJson(doc, jsonString);

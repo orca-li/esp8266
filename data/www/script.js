@@ -19,12 +19,14 @@ manualTemperatureRange.addEventListener("input", function () {
     manualTemperatureInput.value = manualTemperatureRange.value;
     disableAutomaticMode();
     updateSetTemperature(manualTemperatureRange.value);
+    sendManualTemperature(manualTemperatureInput.value);
 });
 
 manualTemperatureInput.addEventListener("input", function () {
     manualTemperatureRange.value = manualTemperatureInput.value;
     disableAutomaticMode();
     updateSetTemperature(manualTemperatureInput.value);
+    sendManualTemperature(manualTemperatureInput.value);
 });
 
 useAutomaticTemperatureButton.addEventListener("click", function () {
@@ -33,6 +35,7 @@ useAutomaticTemperatureButton.addEventListener("click", function () {
 
     if (automaticMode) {
         updateSetTemperature(automaticTemperatureDisplay.textContent.replace('°C', ''));
+        sendAutoSensorMode();
     }
 });
 
@@ -53,6 +56,32 @@ function simulateAutomaticTemperature() {
                 automaticTemperatureDisplay.textContent = "Error";
             });
     }, 3000);
+}
+
+function sendManualTemperature(temperature) {
+    fetch('/setTemperature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ manualTemperature: parseFloat(temperature) })
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to set temperature');
+            console.log('Temperature sent successfully');
+        })
+        .catch(error => console.error('Error sending temperature:', error));
+}
+
+function sendAutoSensorMode() {
+    fetch('/setMode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: "auto" })
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to set auto mode');
+            console.log('Auto mode sent successfully');
+        })
+        .catch(error => console.error('Error sending auto mode:', error));
 }
 
 simulateAutomaticTemperature();

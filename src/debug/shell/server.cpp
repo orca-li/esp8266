@@ -70,10 +70,71 @@ static void SetupRoutesInit(void)
     server.onNotFound(NotFoundPathHandle);
 }
 
+extern void SetNewManualTemp(float newtempC);
+extern void SetAutoSensorTemp(void);
+static void HttpPostTemperature(void)
+{
+    server.on("/setTemperature", HTTP_POST, []()
+              {
+        if (server.hasArg("plain")) {
+            String payload = server.arg("plain");
+            DynamicJsonDocument doc(128);
+            DeserializationError error = deserializeJson(doc, payload);
+
+            if (error) {
+                Serial.println("JSON parsing error: " + String(error.c_str()));
+                server.send(400, "text/plain", "Invalid JSON");
+                return;
+            }
+
+            if (doc.containsKey("manualTemperature")) {
+                float newTemperature = doc["manualTemperature"].as<float>();
+                SetNewManualTemp(newTemperature);
+                server.send(200, "text/plain", "OK");
+            } else {
+                Serial.println("Missing key: manualTemperature");
+                server.send(400, "text/plain", "Missing manualTemperature");
+            }
+        } else {
+            Serial.println("Empty request");
+            server.send(400, "text/plain", "No data");
+        } });
+}
+
+static void HttpPostAutoSensorMode(void)
+{
+    server.on("/setMode", HTTP_POST, []()
+              {
+        if (server.hasArg("plain")) {
+            String payload = server.arg("plain");
+            DynamicJsonDocument doc(128);
+            DeserializationError error = deserializeJson(doc, payload);
+
+            if (error) {
+                Serial.println("JSON parsing error: " + String(error.c_str()));
+                server.send(400, "text/plain", "Invalid JSON");
+                return;
+            }
+
+            if (doc.containsKey("mode") && doc["mode"] == "auto") {
+                SetAutoSensorTemp();
+                server.send(200, "text/plain", "OK");
+            } else {
+                Serial.println("Invalid or missing mode");
+                server.send(400, "text/plain", "Invalid mode");
+            }
+        } else {
+            Serial.println("Empty request");
+            server.send(400, "text/plain", "No data");
+        } });
+}
+
 static void StartServerInit(void)
 {
     server.begin();
     server.on("/www/script.js", JavaScriptPathHandle);
+    HttpPostTemperature();
+    HttpPostAutoSensorMode();
     Serial.println("HTTP server started");
 }
 
