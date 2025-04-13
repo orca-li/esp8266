@@ -98,12 +98,40 @@ static void RelayControl(void)
     }
 }
 
+static void WriteJsonToFile(String jsondata)
+{
+    File file = LittleFS.open("/www/termo.json", "w");
+
+    if (!file)
+    {
+        Serial.println("Cann't open /www/termo.json");
+        return;
+    }
+
+    file.print(jsondata + "\n");
+
+    file.close();
+}
+
+extern void ServerSendJson(String jsondata);
+PUBLIC void SendCurrTempJson(void)
+{
+    StaticJsonDocument<200> doc;
+    doc["temperature"] = getAverageTemperature();
+
+    String jsonString;
+    serializeJson(doc, jsonString);
+    ServerSendJson(jsonString);
+    if_time_has_come(10000, WriteJsonToFile(jsonString));
+}
+
+extern bool GetWifiStatus(void);
 static void termo_mode_handler(void)
 {
     if (termoctl.mode == TERMO_MODE_AUTO)
-    {
         GetCurrTemp();
-    }
+    if (GetWifiStatus() == WIFI_STATUS_CONNECTED)
+        SendCurrTempJson();
     RelayControl();
 }
 

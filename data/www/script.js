@@ -38,11 +38,20 @@ useAutomaticTemperatureButton.addEventListener("click", function () {
 
 function simulateAutomaticTemperature() {
     setInterval(function () {
-        const temp = Math.floor(Math.random() * 61) - 30;
-        automaticTemperatureDisplay.textContent = temp + "°C";
-        if (automaticMode) {
-          updateSetTemperature(temp);
-        }
+        fetch('/www/termo.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                const temp = data.temperature.toFixed(2);
+                automaticTemperatureDisplay.textContent = temp + "°C";
+                if (automaticMode) updateSetTemperature(temp);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                automaticTemperatureDisplay.textContent = "Error";
+            });
     }, 3000);
 }
 

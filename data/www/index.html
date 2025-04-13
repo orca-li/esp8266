@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Температура</title>
+    <title>ESP8266 | Temperature</title>
+    <meta charset="UTF-8">
     <style>
         body {
             font-family: sans-serif;
@@ -49,14 +50,13 @@
 
         button.active {
             background-color: #4CAF50;
-            /* Green */
             color: white;
         }
     </style>
 </head>
 
 <body>
-    <h1>Температура</h1>
+    <h1>Temperature</h1>
 
     <div class="container">
         <label for="manualTemperature">Manual (Simulated) Temperature:</label>
@@ -70,12 +70,12 @@
     </div>
 
     <div class="container">
-        <label>Установленная (Текущая) температура:</label>
+        <label>Installed (Current) Temperature:</label>
         <p id="setTemperature">20&deg;C</p>
-        <button id="useAutomaticTemperature">Использовать Автоматическую температуру</button>
+        <button id="useAutomaticTemperature">Use temperature from sensors</button>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/www/script.js"></script>
 </body>
 
 </html>

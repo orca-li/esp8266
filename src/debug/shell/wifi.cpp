@@ -266,6 +266,7 @@ static void ShowWifiList(void)
     }
 }
 
+#define TRY_LIMITE 3
 static int TryConnectSSID(char *line)
 {
     char *_ssid = getWordFromLine(line, 1);
@@ -279,7 +280,7 @@ static int TryConnectSSID(char *line)
     free(_password);
 
     WiFi.begin(wifictl.ssid, wifictl.password);
-    check_connect();
+    wifi_handler();
     if (wifictl.status == WIFI_STATUS_CONNECTED)
         return EXIT_SUCCESS;
 
@@ -306,7 +307,7 @@ PUBLIC void TryConnect(void)
 
         word = getWordFromLine(credential, 1);
         printf("Try connect to %s...\n", word);
-        if (TryConnectSSID(credential) != EXIT_FAILURE)
+        if (TryConnectSSID(credential) == EXIT_SUCCESS)
         {
             free(credential);
             printf("%s connected!\n", word);
@@ -450,6 +451,9 @@ static int wifi_command(int argc, char **argv)
             return add_ssid_password(argc, argv);
         case 's':
             ShowWifiList();
+            return EXIT_SUCCESS;
+        case 'r':
+            TryConnect();
             return EXIT_SUCCESS;
         case 'd':
             WifiCfgCreateCommentedFile();
