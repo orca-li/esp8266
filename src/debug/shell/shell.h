@@ -15,3 +15,4 @@ int shellmain_pwd(int argc, char **argv);
 int shellmain_cd(int argc, char **argv);
 int shellmain_cat(int argc, char **argv);
 int shellmain_server(int argc, char **argv);
+int shellmain_reboot(int argc, char **argv);

@@ -27,6 +27,7 @@ shelllist commands[] = {
     {"cd", shellmain_cd},
     {"cat", shellmain_cat},
     {"server", shellmain_server},
+    {"reboot", shellmain_reboot},
     {NULL, NULL}};
 
 static charshell_t shell_buffer[SHELL_BUFFER_SIZE];
