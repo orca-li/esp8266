@@ -102,13 +102,27 @@ void FsInit(void)
 {
     if (!LittleFS.begin())
     {
-        printf("LittleFS mount failed\n");
+        Serial.println("LittleFS mount failed");
         return;
     }
 
-    FSInfo fsinfo;
-    LittleFS.info(fsinfo);
-    printf("Total bytes: %d\n", fsinfo.totalBytes);
-    printf("Used bytes: %d\n", fsinfo.usedBytes);
-    printf("File System Driver init...\n");
+    FSInfo fs_info;
+    if (LittleFS.info(fs_info))
+    {
+        Serial.println("=== LittleFS Info ===");
+        Serial.printf("Total size:     %8u bytes\n", fs_info.totalBytes);
+        Serial.printf("Used size:      %8u bytes\n", fs_info.usedBytes);
+        Serial.printf("Free size:      %8u bytes\n", fs_info.totalBytes - fs_info.usedBytes);
+        Serial.printf("Block size:     %8u bytes\n", fs_info.blockSize);
+        Serial.printf("Page size:      %8u bytes\n", fs_info.pageSize);
+        Serial.printf("Max open files: %8u\n", fs_info.maxOpenFiles);
+        Serial.printf("Max path len:   %8u chars\n", fs_info.maxPathLength);
+        Serial.println("====================");
+    }
+    else
+    {
+        Serial.println("Failed to retrieve FSInfo");
+    }
+
+    Serial.println("File System initialized");
 }
