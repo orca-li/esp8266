@@ -2,11 +2,80 @@
 <html>
 
 <head>
-    <title>Basic Web Page</title>
+    <title>Температура</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        input[type="range"] {
+            width: 300px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        #automaticTemperature {
+            font-size: 16px;
+        }
+
+        #setTemperature {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        button.active {
+            background-color: #4CAF50;
+            /* Green */
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
-    Hello World!
+    <h1>Температура</h1>
+
+    <div class="container">
+        <label for="manualTemperature">Manual (Simulated) Temperature:</label>
+        <input type="range" id="manualTemperatureRange" min="-100" max="100" value="20">
+        <input type="number" id="manualTemperatureInput" min="-100" max="100" value="20">
+    </div>
+
+    <div class="container">
+        <label id="automaticTemperatureLabel">Sensor Temperature (Real/Actual):</label>
+        <p id="automaticTemperature">25&deg;C</p>
+    </div>
+
+    <div class="container">
+        <label>Установленная (Текущая) температура:</label>
+        <p id="setTemperature">20&deg;C</p>
+        <button id="useAutomaticTemperature">Использовать Автоматическую температуру</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 
 </html>
