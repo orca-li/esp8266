@@ -63,29 +63,38 @@ PUBLIC void fslist(const char *dirname)
 #define FREAD_BUFFER_SIZE 4096
 PUBLIC size_t fsread(char *filename)
 {
-    char *dirname = currentDir;
+    char fullPath[MAX_PATH];
     size_t fsize = 0;
     static char buffer[FREAD_BUFFER_SIZE];
-    File root = LittleFS.open(dirname, "r");
 
-    while (File file = root.openNextFile())
+    if (filename[0] == '/')
     {
-        if (strcmp(filename, file.name()) == 0)
-        {
-            fsize = file.read((uint8_t *)buffer, FREAD_BUFFER_SIZE);
-            buffer[fsize] = '\0';
-            printf("%s", buffer);
-            fflush(stdout);
-            file.close();
-            goto exit;
-        }
-        file.close();
+        strncpy(fullPath, filename, MAX_PATH - 1);
+        fullPath[MAX_PATH - 1] = '\0';
+    }
+    else
+    {
+        snprintf(fullPath, MAX_PATH, "%s%s%s",
+                 currentDir,
+                 (currentDir[strlen(currentDir) - 1] == '/' ? "" : "/"),
+                 filename);
+        fullPath[MAX_PATH - 1] = '\0';
     }
 
-    printf("(cat) %s: No such file or directory\n", filename);
+    File file = LittleFS.open(fullPath, "r");
 
-exit:
-    root.close();
+    if (!file)
+    {
+        printf("(cat) %s: No such file or directory\n", filename);
+        return 0;
+    }
+
+    fsize = file.read((uint8_t *)buffer, FREAD_BUFFER_SIZE - 1);
+    buffer[fsize] = '\0';
+    printf("%s", buffer);
+    fflush(stdout);
+    file.close();
+
     return fsize;
 }
 
