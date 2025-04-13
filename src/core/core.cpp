@@ -19,6 +19,7 @@ extern void SensorsInit(void);
 extern void FsInit(void);
 extern void WiFiInit(void);
 extern void ServerInit(void);
+extern void TryConnect(void);
 
 void core_init(void)
 {
@@ -27,6 +28,7 @@ void core_init(void)
     SensorsInit();
     FsInit();
     WiFiInit();
+    TryConnect();
     ServerInit();
     Serial.println("Core init finish...");
 }
