@@ -84,7 +84,6 @@ cannot_connect:
     printf("Cann't connect.\n");
 }
 
-
 static char *getWordFromLine(const char *line, int wordNumber)
 {
     if (line == NULL || wordNumber <= 0)
@@ -170,7 +169,6 @@ static char *WifiCfgGetLineFromFile(int lineNumber)
     return NULL;
 }
 
-
 static void MqttCfgAppendWiFiConfig(const char *ip, const char *port, const char *login, const char *password)
 {
     File configFile = LittleFS.open(MQTT_CONFIG_FILE, "a");
@@ -213,28 +211,64 @@ void mqttPublishTemperaturechar(char *temp)
     mqttClient.publish(topic_sensor_temp, temp);
 }
 
-void callback(char *topic, byte *payload, unsigned int length)
+static void todoCallback(char *topic, byte *payload, unsigned int length)
 {
-    Serial.print("Message received! Topic: ");
-    Serial.println(topic);
-
     char message[length + 1];
-    for (int i = 0; i < length; i++)
-    {
-        message[i] = (char)payload[i];
-    }
+    strncpy(message, (char *)payload, length);
     message[length] = '\0';
+    static bool manualMode = false;
 
-    if (strcmp(topic, topic_manual_temp) == 0)
+    if (strcmp(topic, "esp8266/manual_temp") == 0)
     {
-        float manualTemperature = atof(message);
-        SetNewManualTemp(manualTemperature);
+        float temp = atof(message);
+        if (temp >= -100 && temp <= 100)
+        {
+            manualMode = true;
+            SetNewManualTemp(temp);
+        }
     }
-    else if (strcmp(topic, topic_auto_mode) == 0)
+    else if (strcmp(topic, "esp8266/auto_mode") == 0)
     {
+        manualMode = (strcmp(message, "0") == 0);
         SetAutoSensorTemp();
     }
+    else if (strcmp(topic, "esp8266/sensor_temp_set") == 0)
+    {
+        if (!manualMode)
+        {
+            float temp = atof(message);
+            SetNewManualTemp(temp);
+        }
+    }
 }
+
+void callback(char *topic, byte *payload, unsigned int length)
+{
+    if_time_has_come(3000, todoCallback(topic, payload, length));
+}
+
+// void callback(char *topic, byte *payload, unsigned int length)
+// {
+//     Serial.print("Message received! Topic: ");
+//     Serial.println(topic);
+
+//     char message[length + 1];
+//     for (int i = 0; i < length; i++)
+//     {
+//         message[i] = (char)payload[i];
+//     }
+//     message[length] = '\0';
+
+//     if (strcmp(topic, topic_manual_temp) == 0)
+//     {
+//         float manualTemperature = atof(message);
+//         SetNewManualTemp(manualTemperature);
+//     }
+//     else if (strcmp(topic, topic_auto_mode) == 0)
+//     {
+//         SetAutoSensorTemp();
+//     }
+// }
 
 void reconnect(void)
 {
@@ -274,7 +308,7 @@ void mqtt_handler(void)
     if (GetWifiStatus() != WIFI_STATUS_CONNECTED || !(mqtt_server != NULL && mqtt_port != -1 && mqtt_user != NULL && mqtt_pass != NULL))
         return;
     if (!mqttClient.connected())
-        if_time_has_come(5000, reconnect());
+        if_time_has_come(1500, reconnect());
     mqttClient.loop();
     SendCurrTempMqtt();
 }

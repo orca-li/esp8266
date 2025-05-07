@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thermostat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-elements">
+    <div class="background-element background-element-1"></div>
+    <div class="background-element background-element-2"></div>
+  </div>
+
+  <div class="container">
+    <div id="login-panel" class="card">
+      <h1>THERMOSTAT</h1>
+      <div class="broker-selector">
+        <label class="broker-option">
+          <input type="radio" name="broker" value="default" checked> Default Broker
+          <span class="broker-info">5.35.126.101:9001</span>
+        </label>
+        <label class="broker-option">
+          <input type="radio" name="broker" value="local"> Local Broker
+          <span class="broker-info">localhost:1883</span>
+        </label>
+        <label class="broker-option">
+          <input type="radio" name="broker" value="custom"> Custom Broker
+        </label>
+        <div id="custom-broker" class="broker-custom">
+          <input type="text" id="broker-ip" class="form-input" placeholder="IP Address">
+          <input type="text" id="broker-port" class="form-input" placeholder="Port">
+        </div>
+      </div>
+      <form class="login-form" id="loginForm">
+        <input type="text" class="form-input" id="usernameInput" placeholder="Username" required>
+        <input type="password" class="form-input" id="passwordInput" placeholder="Password" required>
+        <button type="submit" class="btn">CONNECT</button>
+      </form>
+    </div>
+
+    <div id="main-content" style="display: none;">
+      <div class="connection-status">
+        <div id="statusIndicator" class="status-indicator"></div>
+        <span id="connectionStatusText" class="status-text">Disconnected</span>
+        <span id="currentUsername" class="username-display"></span>
+        <span id="currentBroker" class="broker-info"></span>
+      </div>
+
+      <div class="card">
+        <h2>MANUAL CONTROL</h2>
+        <div class="slider-container">
+          <div class="slider-wrapper">
+            <input type="range" id="manualTemperatureRange" min="-100" max="100" value="20">
+            <div id="temperatureValue" class="temperature-display">20°C</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>SENSOR READING</h2>
+        <div id="automaticTemperature" class="temperature-display">N/A</div>
+      </div>
+
+      <div class="card">
+        <h2>CURRENT SETTING</h2>
+        <div id="currentTemperatureSet" class="temperature-display">20°C</div>
+      </div>
+
+      <button id="useAutomaticTemperature" class="btn manual">USE AUTOMATIC MODE</button>
+    </div>
+  </div>
+
+  <!-- Панель уведомлений -->
+  <div class="notification-panel" id="notificationPanel"></div>
+
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
