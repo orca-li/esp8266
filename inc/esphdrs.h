@@ -9,6 +9,7 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
+#include <PubSubClient.h>
 extern "C"
 {
 #include <user_interface.h>
@@ -30,6 +31,11 @@ extern "C"
 #define TERMO_SENSORS_COUNT 4
 #define WIFI_STATUS_CONNECTED true
 #define WIFI_STATUS_DISCONNECTED false
+
+extern void SendCurrTempMqtt(void);
+extern void mqtt_handler(void);
+extern void SetNewManualTemp(float newtempC);
+extern void SetAutoSensorTemp(void);
 
 #define if_time_has_come(_delay, _continue)    \
     do                                         \

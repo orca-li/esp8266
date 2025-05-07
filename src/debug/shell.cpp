@@ -26,7 +26,7 @@ shelllist commands[] = {
     {"pwd", shellmain_pwd},
     {"cd", shellmain_cd},
     {"cat", shellmain_cat},
-    {"server", shellmain_server},
+    {"mqtt", shellmain_mqtt},
     {"reboot", shellmain_reboot},
     {NULL, NULL}};
 

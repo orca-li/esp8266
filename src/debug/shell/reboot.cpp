@@ -1,6 +1,6 @@
 #include "shell.h"
 
-static void reboot_help_print(void)
+static void mqtt_help_print(void)
 {
     printf("Usage: reboot [options]\n");
     printf("Options:\n");
@@ -23,7 +23,7 @@ static int reboot_command(int argc, char **argv)
         switch (opt)
         {
         case 'h':
-            reboot_help_print();
+            mqtt_help_print();
             return EXIT_SUCCESS;
             return EXIT_SUCCESS;
         case '?':

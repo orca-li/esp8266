@@ -195,7 +195,7 @@ static void _wifi_handler(void)
 
 PUBLIC void wifi_handler(void)
 {
-    if_time_has_come(250, _wifi_handler());
+    if_time_has_come(2000, _wifi_handler());
 }
 
 PUBLIC void WiFiInit(void)

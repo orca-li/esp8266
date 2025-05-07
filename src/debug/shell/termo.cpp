@@ -17,7 +17,7 @@ typedef enum
 typedef float float_temperature_t;
 
 #define TERMO_MODE_INIT TERMO_MODE_DEFAULT
-#define TERMO_DELAY_DEFAULT 1000
+#define TERMO_DELAY_DEFAULT 5000
 #define TERMO_TEMPERATURE_DEFAULT 0.00
 #define TERMO_HEATER_ZONE_DEFAULT 10.00
 
@@ -115,6 +115,7 @@ static void WriteJsonToFile(String jsondata)
 
 PUBLIC void SetNewManualTemp(float newtempC)
 {
+    printf("Set manual temperature: %.1f *C\n", newtempC);
     termoctl.temperature = termoctl.tempmanual = newtempC;
     termoctl.mode = TERMO_MODE_MANUAL;
 }
@@ -124,16 +125,13 @@ PUBLIC void SetAutoSensorTemp(void)
     termoctl.mode = TERMO_MODE_AUTO;
 }
 
-extern void ServerSendJson(String jsondata);
-PUBLIC void SendCurrTempJson(void)
+extern void mqttPublishTemperaturechar(char *temp);
+PUBLIC void SendCurrTempMqtt(void)
 {
-    StaticJsonDocument<200> doc;
-    doc["temperature"] = (termoctl.mode == TERMO_MODE_AUTO) ? getAverageTemperature() : termoctl.tempmanual;
-
-    String jsonString;
-    serializeJson(doc, jsonString);
-    ServerSendJson(jsonString);
-    if_time_has_come(10000, WriteJsonToFile(jsonString));
+    float tempC = (termoctl.mode == TERMO_MODE_AUTO) ? getAverageTemperature() : termoctl.tempmanual;
+    char buffer[128];
+    sprintf(buffer, "%.1f", tempC);
+    mqttPublishTemperaturechar(buffer);
 }
 
 extern bool GetWifiStatus(void);
@@ -142,7 +140,7 @@ static void termo_mode_handler(void)
     if (termoctl.mode == TERMO_MODE_AUTO)
         GetCurrTemp();
     if (GetWifiStatus() == WIFI_STATUS_CONNECTED)
-        SendCurrTempJson();
+        SendCurrTempMqtt();
     RelayControl();
 }
 
